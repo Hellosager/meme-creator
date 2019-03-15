@@ -1,0 +1,16 @@
+#canvas {
+
+	border: 1px solid #000000;
+	margin: 0 auto;
+	background-color: grey;
+	display: block;
+}
+
+#fileChooser {
+	display: block;
+	margin: 0 auto;
+}
+
+body {
+	background-color: black;
+}
