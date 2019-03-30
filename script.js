@@ -46,14 +46,19 @@ canvas.onmouseup = function(event){
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
 	var mouseUpPoint = new ClickPoint(x, y);
-	if(!movingRect && !mouseUpPoint.equals(mouseDownPoint)){
-		if(currentTextRect){
-			currentTextRect.x = highlightingRect.x;
-			currentTextRect.y = highlightingRect.y;
-			currentTextRect.width = highlightingRect.width;
-			currentTextRect.height = highlightingRect.height;					
+	if(!movingRect){
+		if(!mouseUpPoint.equals(mouseDownPoint)){ // Click anywhere
+			if(currentTextRect){
+				currentTextRect.x = highlightingRect.x;
+				currentTextRect.y = highlightingRect.y;
+				currentTextRect.width = highlightingRect.width;
+				currentTextRect.height = highlightingRect.height;					
+			}else{
+				currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height);
+			}			
 		}else{
-			currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height);
+			currentTextRect = null;
+			redraw();		
 		}
 	}
 	movingRect = false;
@@ -98,7 +103,7 @@ function drawImage(){
 }
 
 function drawHighlights(){
-	if(currentTextRect.x && currentTextRect.y && currentTextRect.width && currentTextRect.height){
+	if(currentTextRect && currentTextRect.x && currentTextRect.y && currentTextRect.width && currentTextRect.height){
 		ctx.lineWidth = "1";
 		ctx.strokeStyle = "red";
 		ctx.setLineDash([5]);
@@ -109,11 +114,18 @@ function drawHighlights(){
 }
 
 function drawText() {
-	if(currentText){
+	if(currentText && currentTextRect){
 		ctx.font = "30px Comic Sans MS"
 		ctx.textAlign = "center";
 		ctx.textBaseline = "hanging";
 		currentText = textField.value;
 		ctx.fillText(textField.value, currentTextRect.x+currentTextRect.width/2, currentTextRect.y-15+currentTextRect.height/2);		
 	}
+}
+
+function saveCanvas() {
+	var link = document.createElement('a');
+	link.setAttribute('download', 'yourmeme.png');
+	link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+	link.click();
 }
