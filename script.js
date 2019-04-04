@@ -33,7 +33,7 @@ canvas.onmousedown = function(event){
 		highlightingRect.x = x;
 		highlightingRect.y = y;
 	}else{
-		highlightingRect = new Rect(x, y, 0, 0);
+		highlightingRect = new Rect(x, y, 0, 0, textField.value);
 	}
 	ctx.lineWidth = "1";
 	ctx.strokeStyle = "red";
@@ -47,12 +47,14 @@ canvas.onmouseup = function(event){
 	y = event.clientY - rect.top;
 	var mouseUpPoint = new ClickPoint(x, y);
 	if(!movingRect){
-		if(!mouseUpPoint.equals(mouseDownPoint)){ // Click anywhere
+		if(!mouseUpPoint.equals(mouseDownPoint)){ // rect was drawn
 			if(currentTextRect){
 				currentTextRect.x = highlightingRect.x;
 				currentTextRect.y = highlightingRect.y;
 				currentTextRect.width = highlightingRect.width;
-				currentTextRect.height = highlightingRect.height;					
+				currentTextRect.height = highlightingRect.height;
+				console.log("create");
+				textRects.push(new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value));
 			}else{
 				currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height);
 			}			
@@ -76,8 +78,7 @@ canvas.onmousemove = function(event){
 	else if(mouseDown && highlightingRect){
 		highlightingRect.width = x - highlightingRect.x;
 		highlightingRect.height = y - highlightingRect.y;
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		drawImage();
+		redraw();
 		ctx.beginPath();
 		ctx.rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height);
 		ctx.stroke();
@@ -92,8 +93,13 @@ text.onkeyup = function(event){
 function redraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawImage();
-	drawHighlights();
-	drawText();
+	for(i = 0; i < textRects.length; i++){
+		console.log("draw");
+		drawHighlights(textRects[i]);
+		drawText(textRects[i]);
+	}
+	//drawHighlights();
+	//drawText();
 }
 
 function drawImage(){
@@ -102,24 +108,24 @@ function drawImage(){
 	}
 }
 
-function drawHighlights(){
-	if(currentTextRect && currentTextRect.x && currentTextRect.y && currentTextRect.width && currentTextRect.height){
+function drawHighlights(textRect){
+	if(textRect && textRect.x && textRect.y && textRect.width && textRect.height){
 		ctx.lineWidth = "1";
 		ctx.strokeStyle = "red";
 		ctx.setLineDash([5]);
 		ctx.beginPath();
-		ctx.rect(currentTextRect.x, currentTextRect.y, currentTextRect.width, currentTextRect.height);
+		ctx.rect(textRect.x, textRect.y, textRect.width, textRect.height);
 		ctx.stroke();
 	}
 }
 
-function drawText() {
-	if(currentText && currentTextRect){
+function drawText(textRect) {
+	if(textRect){
 		ctx.font = "30px Comic Sans MS"
 		ctx.textAlign = "center";
 		ctx.textBaseline = "hanging";
-		currentText = textField.value;
-		ctx.fillText(textField.value, currentTextRect.x+currentTextRect.width/2, currentTextRect.y-15+currentTextRect.height/2);		
+	//	currentText = textField.value;
+		ctx.fillText(textRect.text, textRect.x+textRect.width/2, textRect.y-15+textRect.height/2);		
 	}
 }
 

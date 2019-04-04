@@ -4,7 +4,7 @@ canvas.width = 800;
 canvas.height = 400;
 var ctx = canvas.getContext("2d");
 var currentImage = null;
-
+var textRects = [];
 
 document.getElementById("fileChooser").addEventListener("change", function() {
 	readURL(this);
@@ -18,7 +18,8 @@ function ClickPoint(x, y) {
 	}
 }
 
-function Rect(x, y, width, height) {
+function Rect(x, y, width, height, text) {
+	this.text = text;
 	this.x = x;
 	this.y = y;
 	this.width = width;
