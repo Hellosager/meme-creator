@@ -21,13 +21,23 @@ function inCurrentTextRect(x, y){
 			&& (y <= currentTextRect.y + currentTextRect.height);
 }
 
+function updateCurrentTextRect(mouseDownPoint){
+	for(i = 0; i < textRects.length; i++){
+		if(textRects[i].inRect(mouseDownPoint)){
+			currentTextRect = textRects[i];
+			return true;
+		}
+	}
+	return false;
+}
+
 canvas.onmousedown = function(event){
 	mouseDown = true;
 	var rect = canvas.getBoundingClientRect();
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
 	mouseDownPoint = new ClickPoint(x, y);
-	if(currentTextRect && currentTextRect.inRect(mouseDownPoint)){
+	if(updateCurrentTextRect(mouseDownPoint) && currentTextRect){
 		movingRect = true;
 	}else if(highlightingRect){
 		highlightingRect.x = x;
@@ -46,23 +56,17 @@ canvas.onmouseup = function(event){
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
 	var mouseUpPoint = new ClickPoint(x, y);
-	if(!movingRect){
-		if(!mouseUpPoint.equals(mouseDownPoint)){ // rect was drawn
-			if(currentTextRect){
-				currentTextRect.x = highlightingRect.x;
-				currentTextRect.y = highlightingRect.y;
-				currentTextRect.width = highlightingRect.width;
-				currentTextRect.height = highlightingRect.height;
-				console.log("create");
-				textRects.push(new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value));
-			}else{
-				currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height);
-			}			
+	if(!movingRect){ // not clicking in rect
+		if(!mouseUpPoint.equals(mouseDownPoint)){ // no click at same point
+			console.log("create");
+			textField.value = "";
+			currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
+			textRects.push(currentTextRect);
 		}else{
 			currentTextRect = null;
-			redraw();		
 		}
 	}
+	redraw();		
 	movingRect = false;
 }
 
@@ -86,16 +90,20 @@ canvas.onmousemove = function(event){
 }
 
 text.onkeyup = function(event){
-	currentText = textField.value;
+	if(currentTextRect){
+		currentTextRect.text = textField.value;		
+	}
 	redraw();
 }
 
 function redraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawImage();
+	if(currentTextRect){
+		drawHighlights(currentTextRect);
+	}
 	for(i = 0; i < textRects.length; i++){
 		console.log("draw");
-		drawHighlights(textRects[i]);
 		drawText(textRects[i]);
 	}
 	//drawHighlights();
