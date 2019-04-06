@@ -61,8 +61,13 @@ canvas.onmouseup = function(event){
 			console.log("create");
 			textField.value = "";
 			currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
-			textRects.push(currentTextRect);
+			if(currentTextRect && currentTextRect.text != ""){
+				textRects.push(currentTextRect);				
+			}
 		}else{
+			if(currentTextRect && currentTextRect.text != ""){
+				textRects.push(currentTextRect);				
+			}
 			currentTextRect = null;
 		}
 	}
@@ -92,8 +97,8 @@ canvas.onmousemove = function(event){
 text.onkeyup = function(event){
 	if(currentTextRect){
 		currentTextRect.text = textField.value;		
+		redraw();
 	}
-	redraw();
 }
 
 function redraw() {
@@ -101,13 +106,12 @@ function redraw() {
 	drawImage();
 	if(currentTextRect){
 		drawHighlights(currentTextRect);
+		drawText(currentTextRect);
 	}
 	for(i = 0; i < textRects.length; i++){
 		console.log("draw");
 		drawText(textRects[i]);
 	}
-	//drawHighlights();
-	//drawText();
 }
 
 function drawImage(){
