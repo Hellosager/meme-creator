@@ -4,15 +4,25 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
-	<div>
-		<canvas id="canvas"></canvas>
-		<input id="fileChooser" type="file"></input>
-		<textarea id="text" value=""></textarea>
-		<button id="save" onclick="saveCanvas()">Speichern</input>
-	</div>
 	
-	
-	<script src="objects.js"></script>
-	<script src="script.js"></script>
+		<div class="row">
+			<canvas id="canvas"></canvas>
+			<div id="textList">
+				<div>Hi</div>
+				<div>Hallo</div>
+				<div>Was geht</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<input id="fileChooser" type="file" class="controlls">
+			<textarea id="text" value="" class="controlls"></textarea>
+			<button class="controlls" id="save" onclick="saveCanvas()">Speichern</button>
+			<a href="" id="download" download="yourmeme.png" style="display: none;"></a>
+		</div>
+		
+		
+		<script src="objects.js"></script>
+		<script src="script.js"></script>
 	</body>
 </html>

@@ -1,16 +1,25 @@
 #canvas {
-
+	float: left;
 	border: 1px solid #000000;
 	margin: 0 auto;
 	background-color: grey;
-	display: block;
-}
-
-#fileChooser {
-	display: block;
-	margin: 0 auto;
+	/*display: block; */
 }
 
 body {
 	background-color: black;
+}
+
+#textList {
+	float: left;
+	display: table-cell;
+	color: white;
+}
+
+.controlls {
+	display: block;
+}
+
+.row {
+	display: table;
 }

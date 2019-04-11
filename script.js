@@ -142,7 +142,8 @@ function drawText(textRect) {
 }
 
 function saveCanvas() {
-	var link = document.createElement('a');
+	//var link = document.createElement('a');
+	var link = document.getElementById("download");
 	link.setAttribute('download', 'yourmeme.png');
 	link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 	link.click();
