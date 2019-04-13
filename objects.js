@@ -1,10 +1,12 @@
 var textField = document.getElementById("text");
 var canvas = document.getElementById("canvas");
+var textList = document.getElementById("textList");
 canvas.width = 800;
 canvas.height = 400;
 var ctx = canvas.getContext("2d");
 var currentImage = null;
 var textRects = [];
+var textListElementCount = 0;
 
 document.getElementById("fileChooser").addEventListener("change", function() {
 	readURL(this);
@@ -18,7 +20,8 @@ function ClickPoint(x, y) {
 	}
 }
 
-function Rect(x, y, width, height, text) {
+function Rect(id, x, y, width, height, text) {
+	this.id = id;	
 	this.text = text;
 	this.x = x;
 	this.y = y;

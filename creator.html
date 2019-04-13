@@ -8,14 +8,12 @@
 		<div class="row">
 			<canvas id="canvas"></canvas>
 			<div id="textList">
-				<div>Hi</div>
-				<div>Hallo</div>
-				<div>Was geht</div>
+
 			</div>
 		</div>
 		
 		<div class="row">
-			<input id="fileChooser" type="file" class="controlls">
+			<input id="fileChooser" type="file" class="controlls" onchange="redraw()">
 			<textarea id="text" value="" class="controlls"></textarea>
 			<button class="controlls" id="save" onclick="saveCanvas()">Speichern</button>
 			<a href="" id="download" download="yourmeme.png" style="display: none;"></a>

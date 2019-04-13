@@ -22,9 +22,13 @@ function inCurrentTextRect(x, y){
 }
 
 function updateCurrentTextRect(mouseDownPoint){
+	if(currentTextRect && inCurrentTextRect(mouseDownPoint.x, mouseDownPoint.y)){
+		return true;
+	}
 	for(i = 0; i < textRects.length; i++){
 		if(textRects[i].inRect(mouseDownPoint)){
 			currentTextRect = textRects[i];
+			textField.value = currentTextRect.text;
 			return true;
 		}
 	}
@@ -39,11 +43,12 @@ canvas.onmousedown = function(event){
 	mouseDownPoint = new ClickPoint(x, y);
 	if(updateCurrentTextRect(mouseDownPoint) && currentTextRect){
 		movingRect = true;
+		redraw();
 	}else if(highlightingRect){
 		highlightingRect.x = x;
 		highlightingRect.y = y;
 	}else{
-		highlightingRect = new Rect(x, y, 0, 0, textField.value);
+		highlightingRect = new Rect(1337, x, y, 0, 0, textField.value);
 	}
 	ctx.lineWidth = "1";
 	ctx.strokeStyle = "red";
@@ -60,14 +65,23 @@ canvas.onmouseup = function(event){
 		if(!mouseUpPoint.equals(mouseDownPoint)){ // no click at same point
 			console.log("create");
 			textField.value = "";
-			currentTextRect = new Rect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
+			currentTextRect = new Rect("textListElement-" + textListElementCount, highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
 			if(currentTextRect && currentTextRect.text != ""){
 				textRects.push(currentTextRect);				
 			}
-		}else{
-			if(currentTextRect && currentTextRect.text != ""){
-				textRects.push(currentTextRect);				
+		}else{	// click at same point
+			if(currentTextRect && currentTextRect.text != "" && !textRects.includes(currentTextRect)){
+				textRects.push(currentTextRect);
+				var rectDiv = document.createElement("div");
+				rectDiv.className = "textListElement";
+				rectDiv.id =  currentTextRect.id;
+				rectDiv.onclick = highlighTextElement;
+				var rectText = document.createTextNode(currentTextRect.text);
+				rectDiv.appendChild(rectText);
+				textList.appendChild(rectDiv);
+				textListElementCount++;
 			}
+			textField.value = "";
 			currentTextRect = null;
 		}
 	}
@@ -147,4 +161,14 @@ function saveCanvas() {
 	link.setAttribute('download', 'yourmeme.png');
 	link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 	link.click();
+}
+
+function highlighTextElement(e){
+		var id = e.target.id;
+		for(i = 0; i < textRects.length; i++){
+		if(textRects[i].id === id){
+			currentTextRect = textRects[i];
+			redraw();
+		}
+	}
 }
