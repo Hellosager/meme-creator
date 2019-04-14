@@ -5,14 +5,29 @@ function readURL(input) {
 		currentImage = document.createElement("IMG");
 		currentImage.src = reader.result;
 		currentImage.onload = function() {
-			canvas.width = currentImage.naturalWidth;
-			canvas.height = currentImage.naturalHeight;
-			ctx.drawImage(currentImage, 0, 0); // 2 parameter für scaling ergänzen	
+			canvas.height = canvasHeight;
+			scaleFactor = canvasHeight / currentImage.naturalHeight;
+			canvas.width = currentImage.naturalWidth * scaleFactor;
+			redraw();
 		}
 	}
 	reader.readAsDataURL(input.files[0]);
   }
 }
+
+//function maintainHeight(){
+//	canvas.height = canvasHeight;
+//	const scaleFactor = canvasHeight / currentImage.naturalHeight;
+//	canvas.width = currentImage.naturalWidth * scaleFactor;
+//	ctx.drawImage(currentImage, 0, 0, currentImage.width * scaleFactor, canvasHeight); // 2 parameter für scaling ergänzen	
+//}
+
+//function maintainWidth(){
+//	canvas.width = canvasWidth;
+//	const scaleFactor = canvasWidth / currentImage.naturalWidth;
+//	canvas.height = currentImage.naturalHeight * scaleFactor;
+//	ctx.drawImage(currentImage, 0, 0, canvasWidth, currentImage.height * scaleFactor); // 2 parameter für scaling ergänzen	
+//}
 
 function inCurrentTextRect(x, y){
 	return (x >= currentTextRect.x)
@@ -111,6 +126,10 @@ canvas.onmousemove = function(event){
 text.onkeyup = function(event){
 	if(currentTextRect){
 		currentTextRect.text = textField.value;		
+		var listElemenent = document.getElementById(currentTextRect.id);
+		if(listElemenent){
+			listElemenent.textContent = currentTextRect.text;
+		}
 		redraw();
 	}
 }
@@ -130,7 +149,7 @@ function redraw() {
 
 function drawImage(){
 	if(currentImage){
-		ctx.drawImage(currentImage, 0, 0);
+	ctx.drawImage(currentImage, 0, 0, currentImage.width * scaleFactor, canvasHeight); // 2 parameter für scaling ergänzen	
 	}
 }
 
@@ -168,6 +187,7 @@ function highlighTextElement(e){
 		for(i = 0; i < textRects.length; i++){
 		if(textRects[i].id === id){
 			currentTextRect = textRects[i];
+			textField.value = currentTextRect.text;
 			redraw();
 		}
 	}

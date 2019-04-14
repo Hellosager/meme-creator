@@ -1,8 +1,11 @@
 var textField = document.getElementById("text");
 var canvas = document.getElementById("canvas");
 var textList = document.getElementById("textList");
-canvas.width = 800;
-canvas.height = 400;
+const canvasHeight = window.innerHeight / 2;
+const canvasWidth = window.innerWidth / 2;
+var scaleFactor = 1;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 var ctx = canvas.getContext("2d");
 var currentImage = null;
 var textRects = [];
