@@ -10,6 +10,7 @@ var ctx = canvas.getContext("2d");
 var currentImage = null;
 var textRects = [];
 var textListElementCount = 0;
+const keyCodeEnter = 13;
 
 document.getElementById("fileChooser").addEventListener("change", function() {
 	readURL(this);
@@ -23,9 +24,39 @@ function ClickPoint(x, y) {
 	}
 }
 
-function Rect(id, x, y, width, height, text) {
-	this.id = id;	
-	this.text = text;
+function TextRect(x, y, width, height, text){
+	Rect.call(this, x, y, width, height);
+	this.text = text.split("\n");
+	var id;
+	this.draw = function(ctx){
+		this.drawHighlighs(ctx);
+		this.drawText(ctx);
+	}
+	
+	this.drawHighlighs = function(ctx){
+		if(this.x && this.y && this.width && this.height){
+			ctx.lineWidth = "1";
+			ctx.strokeStyle = "red";
+			ctx.setLineDash([5]);
+			ctx.beginPath();
+			ctx.rect(this.x, this.y, this.width, this.height);
+			ctx.stroke();
+		}
+	}
+	
+	this.drawText = function(ctx){
+		var fontSize = "30";
+		ctx.font = fontSize + "px Comic Sans MS";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "hanging";
+		for(line = 0; line < this.text.length; line++){
+			var transY = (this.y - 15 + this.height / 2) + (line * fontSize);
+			ctx.fillText(this.text[line], (this.x + this.width / 2), transY);		
+		}
+	}
+}
+
+function Rect(x, y, width, height) {
 	this.x = x;
 	this.y = y;
 	this.width = width;

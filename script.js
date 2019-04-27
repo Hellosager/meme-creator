@@ -43,7 +43,7 @@ function updateCurrentTextRect(mouseDownPoint){
 	for(i = 0; i < textRects.length; i++){
 		if(textRects[i].inRect(mouseDownPoint)){
 			currentTextRect = textRects[i];
-			textField.value = currentTextRect.text;
+			updateTextFieldFor(currentTextRect);
 			return true;
 		}
 	}
@@ -63,7 +63,7 @@ canvas.onmousedown = function(event){
 		highlightingRect.x = x;
 		highlightingRect.y = y;
 	}else{
-		highlightingRect = new Rect(1337, x, y, 0, 0, textField.value);
+		highlightingRect = new TextRect(x, y, 0, 0, textField.value);
 	}
 	ctx.lineWidth = "1";
 	ctx.strokeStyle = "red";
@@ -80,7 +80,8 @@ canvas.onmouseup = function(event){
 		if(!mouseUpPoint.equals(mouseDownPoint)){ // no click at same point
 			console.log("create");
 			textField.value = "";
-			currentTextRect = new Rect("textListElement-" + textListElementCount, highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
+			currentTextRect = new TextRect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
+			currentTextRect.id = "textListElement-" + textListElementCount;
 			if(currentTextRect && currentTextRect.text != ""){
 				textRects.push(currentTextRect);				
 			}
@@ -91,8 +92,12 @@ canvas.onmouseup = function(event){
 				rectDiv.className = "textListElement";
 				rectDiv.id =  currentTextRect.id;
 				rectDiv.onclick = highlighTextElement;
-				var rectText = document.createTextNode(currentTextRect.text);
-				rectDiv.appendChild(rectText);
+				for(line = 0; line < currentTextRect.text.length; line++){
+					var lineBreak = document.createElement("br");			
+					var rectText = document.createTextNode(currentTextRect.text[line]);
+					rectDiv.appendChild(rectText);
+					rectDiv.appendChild(lineBreak);
+				}
 				textList.appendChild(rectDiv);
 				textListElementCount++;
 			}
@@ -114,6 +119,7 @@ canvas.onmousemove = function(event){
 		redraw();
 	}
 	else if(mouseDown && highlightingRect){
+		currentTextRect = null;
 		highlightingRect.width = x - highlightingRect.x;
 		highlightingRect.height = y - highlightingRect.y;
 		redraw();
@@ -125,10 +131,18 @@ canvas.onmousemove = function(event){
 
 text.onkeyup = function(event){
 	if(currentTextRect){
-		currentTextRect.text = textField.value;		
-		var listElemenent = document.getElementById(currentTextRect.id);
-		if(listElemenent){
-			listElemenent.textContent = currentTextRect.text;
+		currentTextRect.text = textField.value.split("\n");		
+		var listElement = document.getElementById(currentTextRect.id);
+		if(listElement){
+			for(node = listElement.childNodes.length-1; node >= 0; node--){
+				listElement.childNodes[node].remove();
+			}			
+			for(line = 0; line < currentTextRect.text.length; line++){
+				var lineBreak = document.createElement("br");			
+				var rectText = document.createTextNode(currentTextRect.text[line]);
+				listElement.appendChild(rectText);
+				listElement.appendChild(lineBreak);
+			}
 		}
 		redraw();
 	}
@@ -138,39 +152,17 @@ function redraw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawImage();
 	if(currentTextRect){
-		drawHighlights(currentTextRect);
-		drawText(currentTextRect);
+		currentTextRect.draw(ctx);
 	}
 	for(i = 0; i < textRects.length; i++){
 		console.log("draw");
-		drawText(textRects[i]);
+		textRects[i].drawText(ctx);
 	}
 }
 
 function drawImage(){
 	if(currentImage){
 	ctx.drawImage(currentImage, 0, 0, currentImage.width * scaleFactor, canvasHeight); // 2 parameter für scaling ergänzen	
-	}
-}
-
-function drawHighlights(textRect){
-	if(textRect && textRect.x && textRect.y && textRect.width && textRect.height){
-		ctx.lineWidth = "1";
-		ctx.strokeStyle = "red";
-		ctx.setLineDash([5]);
-		ctx.beginPath();
-		ctx.rect(textRect.x, textRect.y, textRect.width, textRect.height);
-		ctx.stroke();
-	}
-}
-
-function drawText(textRect) {
-	if(textRect){
-		ctx.font = "30px Comic Sans MS"
-		ctx.textAlign = "center";
-		ctx.textBaseline = "hanging";
-	//	currentText = textField.value;
-		ctx.fillText(textRect.text, textRect.x+textRect.width/2, textRect.y-15+textRect.height/2);		
 	}
 }
 
@@ -187,8 +179,19 @@ function highlighTextElement(e){
 		for(i = 0; i < textRects.length; i++){
 		if(textRects[i].id === id){
 			currentTextRect = textRects[i];
-			textField.value = currentTextRect.text;
+			updateTextFieldFor(currentTextRect);
 			redraw();
 		}
 	}
+}
+
+function updateTextFieldFor(textRect){
+	var textFieldValue = "";
+	for(line = 0; line < textRect.text.length; line++){
+		textFieldValue += textRect.text[line];
+		if(line != (textRect.text.length-1)){
+			textFieldValue += "\n";
+		}
+	}
+	textField.value = textFieldValue;
 }
