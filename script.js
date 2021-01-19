@@ -1,18 +1,27 @@
+document.addEventListener("DOMConentLoaded", initModal());
+
 function readURL(input) {
+	currentImage = document.createElement("IMG");
+	currentImage.onload = function() {
+		canvas.height = canvasHeight;
+		scaleFactor = canvasHeight / currentImage.naturalHeight;
+		canvas.width = currentImage.naturalWidth * scaleFactor;
+		redraw();
+	}
+
   if (input.files && input.files[0]) {
 	var reader = new FileReader();
 	reader.onload = function(e) {
-		currentImage = document.createElement("IMG");
 		currentImage.src = reader.result;
-		currentImage.onload = function() {
-			canvas.height = canvasHeight;
-			scaleFactor = canvasHeight / currentImage.naturalHeight;
-			canvas.width = currentImage.naturalWidth * scaleFactor;
-			redraw();
-		}
 	}
 	reader.readAsDataURL(input.files[0]);
+  } else {
+	currentImage.src = input;
   }
+}
+
+function loadTemplate(event) {
+	readURL(event.srcElement.src);
 }
 
 //function maintainHeight(){
@@ -195,3 +204,32 @@ function updateTextFieldFor(textRect){
 	}
 	textField.value = textFieldValue;
 }
+
+function initModal() {
+	// Get the modal
+	var modal = document.getElementById("templateModal");
+
+	// Get the button that opens the modal
+	var btn = document.getElementById("openTemplates");
+
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];
+
+	// When the user clicks on the button, open the modal
+	btn.onclick = function() {
+		modal.style.display = "block";
+	}
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+}
+

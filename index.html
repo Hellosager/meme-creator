@@ -13,13 +13,37 @@
 		</div>
 		
 		<div class="row">
-			<input id="fileChooser" type="file" class="controlls" onchange="redraw()">
-			<textarea id="text" value="" class="controlls"></textarea>
-			<button class="controlls" id="save" onclick="saveCanvas()">Speichern</button>
+			<input id="fileChooser" type="file" class="controls" onchange="redraw()">
+			<button id ="openTemplates">Open meme templates</button>
+			<textarea id="text" value="" class="controls"></textarea>
+			<button class="controls" id="save" onclick="saveCanvas()">Speichern</button>
 			<a href="" id="download" download="yourmeme.png" style="display: none;"></a>
 		</div>
 		
-		
+		<!-- Meme template modal-->
+		<div id="templateModal" class="modal">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<!-- add images -->
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/original/000/257/968/786.jpg" alt="Don't you squidward" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/001/214/406/93c.jpg" alt="drake" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/entries/icons/original/000/027/415/frodo.jpg" alt="keep your secrets" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://imgflip.com/s/meme/Socially-Awesome-Awkward-Penguin.jpg" alt="penguin" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/001/255/479/85b.png" alt="mocking spongebob" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/k0kxw.jpg" alt="spongebob texas" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/001/563/175/48d.jpg" alt="distracted boyfriend" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/000/297/820/3c5.jpg" alt="one does not simply" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://imgflip.com//s/meme/UNO-Draw-25-Cards.jpg" alt="uno draw 25" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/001/066/285/0e3.png" alt="daily struggle" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/entries/icons/original/000/027/752/2h6pgx.jpg" alt="same picture" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/434i5j.png" alt="train hits bus" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/23znef.jpg" alt="McMahon" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/145qvv.jpg" alt="squidward window" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/31n0zu.png" alt="oh yeah no" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/1j9mml.jpg" alt="Calculating" height="200" onclick="loadTemplate(event)"/>
+			</div>
+		</div>
+
 		<script src="objects.js"></script>
 		<script src="script.js"></script>
 	</body>
