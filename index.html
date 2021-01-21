@@ -5,7 +5,7 @@
 	</head>
 	<body>
 	
-		<div class="row">
+		<div class="row center" >
 			<canvas id="canvas"></canvas>
 			<div id="textList">
 
@@ -15,7 +15,6 @@
 		<div class="row">
 			<input id="fileChooser" type="file" class="controls" onchange="redraw()">
 			<button id ="openTemplates">Open meme templates</button>
-			<textarea id="text" value="" class="controls"></textarea>
 			<button class="controls" id="save" onclick="saveCanvas()">Speichern</button>
 			<a href="" id="download" download="yourmeme.png" style="display: none;"></a>
 		</div>
@@ -40,7 +39,8 @@
 				<img class="templatePreview" src="https://i.imgflip.com/23znef.jpg" alt="McMahon" height="200" onclick="loadTemplate(event)"/>
 				<img class="templatePreview" src="https://i.imgflip.com/145qvv.jpg" alt="squidward window" height="200" onclick="loadTemplate(event)"/>
 				<img class="templatePreview" src="https://i.imgflip.com/31n0zu.png" alt="oh yeah no" height="200" onclick="loadTemplate(event)"/>
-				<img class="templatePreview" src="https://i.imgflip.com/1j9mml.jpg" alt="Calculating" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.imgflip.com/1j9mml.jpg" alt="calculating" height="200" onclick="loadTemplate(event)"/>
+				<img class="templatePreview" src="https://i.kym-cdn.com/photos/images/newsfeed/001/887/223/6b0.png" alt="daring today arent we" height="200" onclick="loadTemplate(event)"/>
 			</div>
 		</div>
 

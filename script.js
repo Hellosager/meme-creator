@@ -38,7 +38,7 @@ function loadTemplate(event) {
 //	ctx.drawImage(currentImage, 0, 0, canvasWidth, currentImage.height * scaleFactor); // 2 parameter für scaling ergänzen	
 //}
 
-function inCurrentTextRect(x, y){
+function inCurrentTextRect(x, y){ // useless? just use inRect?
 	return (x >= currentTextRect.x)
 			&& (x <= currentTextRect.x + currentTextRect.width)
 			&& (y >= currentTextRect.y)
@@ -50,9 +50,9 @@ function updateCurrentTextRect(mouseDownPoint){
 		return true;
 	}
 	for(i = 0; i < textRects.length; i++){
-		if(textRects[i].inRect(mouseDownPoint)){
+		if(textRects[i].inRect(mouseDownPoint)){ // other rect was clicked
 			currentTextRect = textRects[i];
-			updateTextFieldFor(currentTextRect);
+			updateTextFieldFor(currentTextRect);	// remove after refactoring
 			return true;
 		}
 	}
@@ -60,19 +60,21 @@ function updateCurrentTextRect(mouseDownPoint){
 }
 
 canvas.onmousedown = function(event){
+	event.preventDefault();
 	mouseDown = true;
 	var rect = canvas.getBoundingClientRect();
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
 	mouseDownPoint = new ClickPoint(x, y);
-	if(updateCurrentTextRect(mouseDownPoint) && currentTextRect){
+	if(updateCurrentTextRect(mouseDownPoint) && currentTextRect){ // we want to drag rect
 		movingRect = true;
+		currentTextRect.textfield.focus();
 		redraw();
 	}else if(highlightingRect){
 		highlightingRect.x = x;
 		highlightingRect.y = y;
 	}else{
-		highlightingRect = new TextRect(x, y, 0, 0, textField.value);
+		highlightingRect = new TextRect(x, y, 0, 0, "");
 	}
 	ctx.lineWidth = "1";
 	ctx.strokeStyle = "red";
@@ -85,33 +87,31 @@ canvas.onmouseup = function(event){
 	x = event.clientX - rect.left;
 	y = event.clientY - rect.top;
 	var mouseUpPoint = new ClickPoint(x, y);
-	if(!movingRect){ // not clicking in rect
-		if(!mouseUpPoint.equals(mouseDownPoint)){ // no click at same point
-			console.log("create");
-			textField.value = "";
-			currentTextRect = new TextRect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, textField.value);
+	if(!movingRect){ // we were not moving a rect
+		if(!mouseUpPoint.equals(mouseDownPoint)){ // no click at same point, create new text boundaries
+			currentTextRect = new TextRect(highlightingRect.x, highlightingRect.y, highlightingRect.width, highlightingRect.height, "");
 			currentTextRect.id = "textListElement-" + textListElementCount;
-			if(currentTextRect && currentTextRect.text != ""){
-				textRects.push(currentTextRect);				
-			}
+
+			textRects.push(currentTextRect);
+			var rectTextArea = document.createElement("textarea");
+			rectTextArea.setAttribute('type', 'text');
+			rectTextArea.setAttribute('value', 'default');
+			rectTextArea.className = "textListElement";
+			rectTextArea.id =  currentTextRect.id;
+			rectTextArea.onclick = highlighTextElement;
+			rectTextArea.onkeyup = onkeyup;
+			currentTextRect.textfield = rectTextArea;
+
+			textList.appendChild(rectTextArea);
+			rectTextArea.focus();
+			textListElementCount++;
+
+//			if(currentTextRect && currentTextRect.text != ""){	// seems redundant, wtf is that case
+//				textRects.push(currentTextRect);				
+//			}
 		}else{	// click at same point
-			if(currentTextRect && currentTextRect.text != "" && !textRects.includes(currentTextRect)){
-				textRects.push(currentTextRect);
-				var rectDiv = document.createElement("div");
-				rectDiv.className = "textListElement";
-				rectDiv.id =  currentTextRect.id;
-				rectDiv.onclick = highlighTextElement;
-				for(line = 0; line < currentTextRect.text.length; line++){
-					var lineBreak = document.createElement("br");			
-					var rectText = document.createTextNode(currentTextRect.text[line]);
-					rectDiv.appendChild(rectText);
-					rectDiv.appendChild(lineBreak);
-				}
-				textList.appendChild(rectDiv);
-				textListElementCount++;
-			}
-			textField.value = "";
 			currentTextRect = null;
+			saveButton.focus();
 		}
 	}
 	redraw();		
@@ -138,9 +138,9 @@ canvas.onmousemove = function(event){
 	}
 }
 
-text.onkeyup = function(event){
+function onkeyup(event){
 	if(currentTextRect){
-		currentTextRect.text = textField.value.split("\n");		
+		currentTextRect.text = currentTextRect.textfield.value.split("\n");		
 		var listElement = document.getElementById(currentTextRect.id);
 		if(listElement){
 			for(node = listElement.childNodes.length-1; node >= 0; node--){
@@ -184,8 +184,8 @@ function saveCanvas() {
 }
 
 function highlighTextElement(e){
-		var id = e.target.id;
-		for(i = 0; i < textRects.length; i++){
+	var id = e.target.id;
+	for(i = 0; i < textRects.length; i++){
 		if(textRects[i].id === id){
 			currentTextRect = textRects[i];
 			updateTextFieldFor(currentTextRect);
@@ -202,7 +202,6 @@ function updateTextFieldFor(textRect){
 			textFieldValue += "\n";
 		}
 	}
-	textField.value = textFieldValue;
 }
 
 function initModal() {

@@ -1,6 +1,7 @@
 var textField = document.getElementById("text");
 var canvas = document.getElementById("canvas");
 var textList = document.getElementById("textList");
+var saveButton = document.getElementById("save");
 const canvasHeight = window.innerHeight / 2;
 const canvasWidth = window.innerWidth / 2;
 var scaleFactor = 1;
@@ -24,9 +25,10 @@ function ClickPoint(x, y) {
 	}
 }
 
-function TextRect(x, y, width, height, text){
+function TextRect(x, y, width, height, text, textfield){
 	Rect.call(this, x, y, width, height);
 	this.text = text.split("\n");
+	this.textfield = textfield;
 	var id;
 	this.draw = function(ctx){
 		this.drawHighlighs(ctx);
