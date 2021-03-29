@@ -99,16 +99,13 @@ canvas.onmouseup = function(event){
 			rectTextArea.className = "textListElement";
 			rectTextArea.id =  currentTextRect.id;
 			rectTextArea.onclick = highlighTextElement;
-			rectTextArea.onkeyup = onkeyup;
+			rectTextArea.oninput = oninput;
 			currentTextRect.textfield = rectTextArea;
 
 			textList.appendChild(rectTextArea);
 			rectTextArea.focus();
 			textListElementCount++;
 
-//			if(currentTextRect && currentTextRect.text != ""){	// seems redundant, wtf is that case
-//				textRects.push(currentTextRect);				
-//			}
 		}else{	// click at same point
 			currentTextRect = null;
 			saveButton.focus();
@@ -138,11 +135,26 @@ canvas.onmousemove = function(event){
 	}
 }
 
-function onkeyup(event){
+function oninput(event){
 	if(currentTextRect){
-		currentTextRect.text = currentTextRect.textfield.value.split("\n");		
+		currentTextRect.text = currentTextRect.textfield.value.split("\n");
+
 		var listElement = document.getElementById(currentTextRect.id);
 		if(listElement){
+
+			// Reset field height
+			listElement.style.height = 'inherit';
+
+			// Get the computed styles for the element
+			var computed = window.getComputedStyle(listElement);
+
+			// Calculate the height
+			var height = listElement.scrollHeight
+				- parseInt(computed.getPropertyValue('padding-top'), 10)
+				- parseInt(computed.getPropertyValue('padding-bottom'), 10);
+
+			listElement.style.height = height + 'px';
+
 			for(node = listElement.childNodes.length-1; node >= 0; node--){
 				listElement.childNodes[node].remove();
 			}			
@@ -164,7 +176,6 @@ function redraw() {
 		currentTextRect.draw(ctx);
 	}
 	for(i = 0; i < textRects.length; i++){
-		console.log("draw");
 		textRects[i].drawText(ctx);
 	}
 }

@@ -1,4 +1,3 @@
-var textField = document.getElementById("text");
 var canvas = document.getElementById("canvas");
 var textList = document.getElementById("textList");
 var saveButton = document.getElementById("save");
